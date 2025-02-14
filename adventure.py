@@ -8,7 +8,7 @@ import random
 def acquire_item(inventory, item):
     """Acquire an item and print the message, update to the inventory list"""
     inventory.append(item) # Using append() to add an item to the list
-    print(f"You found a {item} in the room.")
+    print(f"You acquired a {item}!")
     return inventory
 
 def display_inventory(inventory):
@@ -75,6 +75,19 @@ def check_for_treasure(has_treasure):
     else:
         print("The monster did not have the treasure. You continue your journey.")
 
+def handle_puzzle(player_health, challenge_outcome):
+    """Handles puzzle challenges"""
+    print("You encounter a puzzle!")
+    choice = input("Do you want to 'solve' or 'skip' the puzzle? ").strip().lower()
+    if choice == "solve":
+        success = random.choice([True, False])
+        if success:
+            print(challenge_outcome[0])
+            player_health += challenge_outcome[2]
+        else:
+            print(challenge_outcome[1])
+            player_health += challenge_outcome[2]
+    
 def enter_dungeon(player_health, inventory, dungeon_rooms):
     """Iterates through each room in dungeon_rooms."""
     for room in dungeon_rooms:
@@ -89,22 +102,14 @@ def enter_dungeon(player_health, inventory, dungeon_rooms):
             print(f"Error: {e}")
 
         if item: #acquire update
+            print(f"You found a {item} in the room.")
             acquire_item(inventory, item)
             if len(inventory) > 10: #aviod oveflow
                 inventory.pop(0) # Using remove() to remove item at the end
             inventory.insert(0, inventory.pop())  # Using insert() to add item at the beginning
 
         if challenge_type == "puzzle":
-            print("You envounter a puzzle!")
-            choice = input("Do you want to 'solve' or 'skip' the puzzle? ").strip().lower()
-            if choice == "solve":
-                success = random.choice([True, False])
-                if success:
-                    print(challenge_outcome[0])
-                    player_health += challenge_outcome[2]
-                else:
-                    print(challenge_outcome[1])
-                    player_health += challenge_outcome[2]
+            player_health = handle_puzzle(player_health, challenge_outcome)
 
         elif challenge_type == "trap":
             print("You see a potential trap!")
@@ -135,10 +140,13 @@ def main():
     inventory = [] #String list
 
     dungeon_rooms = [
-        ("A dusty old library", "key", "puzzle", ("You solved the puzzle!", "The puzzle remains unsolved.", -5)),
-        ("A narrow passage with a creaky floor", None, "trap", ("You skillfully avoid the trap!", "You triggered a trap!", -10)),
+        ("A dusty old library", "key", "puzzle", 
+         ("You solved the puzzle!", "The puzzle remains unsolved.", -5)),
+        ("A narrow passage with a creaky floor", None, "trap", 
+         ("You skillfully avoid the trap!", "You triggered a trap!", -10)),
         ("A grand hall with a shimmering pool", "healing potion", "none", None),
-        ("A small room with a locked chest", "treasure", "puzzle", ("You cracked the code!", "The chest remains stubbornly locked.", -5))
+        ("A small room with a locked chest", "treasure", "puzzle", 
+         ("You cracked the code!", "The chest remains stubbornly locked.", -5))
     ]
     monster_health = 55 # Initialize to a hardcoded value
     has_treasure = False #Initialize to False
