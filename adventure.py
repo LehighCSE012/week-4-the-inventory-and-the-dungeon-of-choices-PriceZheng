@@ -1,6 +1,6 @@
 """Week 4 coding assignment: Price Zheng's Adventure(continue^3).
 by implementing an inventory system using lists and incorporating
-tuples to represent fixed game elements, Copying code from Week 
+tuples to represent fixed game elements, Copying code from Week
 3 into adventure.py as a starting point.
 """
 import random
@@ -8,12 +8,13 @@ import random
 def acquire_item(inventory, item):
     """Acquire an item and print the message, update to the inventory list"""
     inventory.append(item) # Using append() to add an item to the list
-    print(f"You acquired a {item}!")
+    print(f"You found a {item} in the room.")
+    return inventory
 
 def display_inventory(inventory):
     """Display the player's current inventory"""
     if not inventory:
-        print("Your inventory is empty")
+        print("Your inventory is empty.")
     else:
         print("Your inventory:")
         for i, item in enumerate(inventory,1):
@@ -83,16 +84,16 @@ def enter_dungeon(player_health, inventory, dungeon_rooms):
 
         #Demonstrating tuple is immutability
         try:
-            raise TypeError("Tuples are immutable and cannot be modified!")  
+            raise TypeError("Tuples are immutable and cannot be modified!")
         except TypeError as e:
             print(f"Error: {e}")
-            
+
         if item: #acquire update
             acquire_item(inventory, item)
             if len(inventory) > 10: #aviod oveflow
                 inventory.pop(0) # Using remove() to remove item at the end
             inventory.insert(0, inventory.pop())  # Using insert() to add item at the beginning
-        
+
         if challenge_type == "puzzle":
             print("You envounter a puzzle!")
             choice = input("Do you want to 'solve' or 'skip' the puzzle? ").strip().lower()
@@ -100,10 +101,11 @@ def enter_dungeon(player_health, inventory, dungeon_rooms):
                 success = random.choice([True, False])
                 if success:
                     print(challenge_outcome[0])
+                    player_health += challenge_outcome[2]
                 else:
                     print(challenge_outcome[1])
                     player_health += challenge_outcome[2]
-                    
+
         elif challenge_type == "trap":
             print("You see a potential trap!")
             choice = input("Do you want to 'disarm' or 'bypass' the puzzle? ").strip().lower()
@@ -121,9 +123,9 @@ def enter_dungeon(player_health, inventory, dungeon_rooms):
         if player_health < 0:
             player_health = 0
             print("You are barely alive!")
-            
+
         display_inventory(inventory)
-        
+
     display_player_status(player_health)
     return player_health, inventory
 
@@ -131,7 +133,7 @@ def main():
     """Initializes game variables and runs the adventure game."""
     player_health = 100
     inventory = [] #String list
-    
+
     dungeon_rooms = [
         ("A dusty old library", "key", "puzzle", ("You solved the puzzle!", "The puzzle remains unsolved.", -5)),
         ("A narrow passage with a creaky floor", None, "trap", ("You skillfully avoid the trap!", "You triggered a trap!", -10)),
@@ -150,8 +152,8 @@ def main():
     check_for_treasure(treasure_obtained_in_combat) # Or has_treasure, depending on logic
 
     player_health, inventory = enter_dungeon(player_health, inventory, dungeon_rooms)
-    
+
     print("Game Over.")
-    
+
 if __name__ == "__main__":
     main()
